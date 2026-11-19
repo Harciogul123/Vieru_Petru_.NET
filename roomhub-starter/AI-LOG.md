@@ -4,4 +4,5 @@ Write down, in order, what you asked the AI. It is not a punishment: a missing o
 
 | Time (approx.) | What you asked (briefly) | What you kept | What you changed or rejected |
 |---|---|---|---|
-| _(fill in)_ | _(fill in)_ | _(fill in)_ | _(fill in)_ |
+| _(10m)_ | _(read all and do what is asking for)_ | _(all)_ | _(nothing)_ |
+|5 m|second |---|---|
