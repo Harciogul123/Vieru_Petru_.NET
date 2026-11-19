@@ -10,6 +10,14 @@ public sealed class Booking
     // R9: at most 2 active bookings per bookedBy per UTC day of startUtc, across all rooms.
     public const int MaxActivePerPersonPerDay = 2;
 
+    // R10: rooms with a capacity greater than LargeRoomCapacity can be booked for at most 2 hours.
+    public const int LargeRoomCapacity = 10;
+
+    public static readonly TimeSpan MaxDurationLargeRoom = TimeSpan.FromHours(2);
+
+    // R11: a booking can be cancelled only if it starts at least 60 minutes from now.
+    public static readonly TimeSpan MinNoticeForCancel = TimeSpan.FromMinutes(60);
+
     // For EF Core.
     private Booking()
     {
@@ -40,11 +48,15 @@ public sealed class Booking
         Status = BookingStatus.Active
     };
 
-    // R8: Active -> Cancelled; a cancelled booking no longer counts for R7, so its interval is freed.
-    public Result<Unit> Cancel()
+    // R8: Active -> Cancelled; a cancelled booking no longer counts for R7/R9, so its interval is freed.
+    // R11: nowUtc comes from TimeProvider, through the handler.
+    public Result<Unit> Cancel(DateTime nowUtc)
     {
         if (Status == BookingStatus.Cancelled)
             return BookingErrors.AlreadyCancelled;
+
+        if (Range.StartUtc - nowUtc < MinNoticeForCancel)
+            return BookingErrors.TooLateToCancel;
 
         Status = BookingStatus.Cancelled;
         return Unit.Value;

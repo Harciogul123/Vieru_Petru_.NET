@@ -37,7 +37,7 @@ public sealed class Room
         };
     }
 
-    // R2-R7 and R9. nowUtc comes from outside (TimeProvider), so the domain never reads the clock.
+    // R2-R7, R9 and R10. nowUtc comes from outside (TimeProvider), so the domain never reads the clock.
     // The overlap check (R7) needs the room's active bookings to be loaded.
     // R9 needs data from all rooms, so the handler counts it through the repository and passes it in.
     public Result<Booking> Book(
@@ -66,6 +66,11 @@ public sealed class Room
         if (range.StartUtc < nowUtc)
             return BookingErrors.StartInPast;
 
+        // R10: large rooms (capacity > 10) at most 2 hours, exactly 2 hours allowed.
+        if (Capacity > Booking.LargeRoomCapacity && range.Duration > Booking.MaxDurationLargeRoom)
+            return BookingErrors.TooLongForLargeRoom;
+
+        // R6: every room at most 4 hours, exactly 4 hours allowed.
         if (range.Duration > Booking.MaxDuration)
             return BookingErrors.TooLong;
 
