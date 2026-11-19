@@ -7,6 +7,9 @@ public sealed class Booking
     // R6: exactly 4 hours is allowed.
     public static readonly TimeSpan MaxDuration = TimeSpan.FromHours(4);
 
+    // R9: at most 2 active bookings per bookedBy per UTC day of startUtc, across all rooms.
+    public const int MaxActivePerPersonPerDay = 2;
+
     // For EF Core.
     private Booking()
     {

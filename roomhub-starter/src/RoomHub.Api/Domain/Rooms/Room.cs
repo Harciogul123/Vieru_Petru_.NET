@@ -37,9 +37,16 @@ public sealed class Room
         };
     }
 
-    // R2-R7. nowUtc comes from outside (TimeProvider), so the domain never reads the clock.
+    // R2-R7 and R9. nowUtc comes from outside (TimeProvider), so the domain never reads the clock.
     // The overlap check (R7) needs the room's active bookings to be loaded.
-    public Result<Booking> Book(string? bookedBy, DateTime start, DateTime end, int attendees, DateTime nowUtc)
+    // R9 needs data from all rooms, so the handler counts it through the repository and passes it in.
+    public Result<Booking> Book(
+        string? bookedBy,
+        DateTime start,
+        DateTime end,
+        int attendees,
+        DateTime nowUtc,
+        int activeBookingsOfPersonThatDay)
     {
         if (string.IsNullOrWhiteSpace(bookedBy))
             return BookingErrors.BookedByRequired;
@@ -64,6 +71,10 @@ public sealed class Room
 
         if (_bookings.Any(b => b.IsActive && b.Range.Overlaps(range)))
             return BookingErrors.RoomOccupied;
+
+        // R9
+        if (activeBookingsOfPersonThatDay >= Booking.MaxActivePerPersonPerDay)
+            return BookingErrors.DailyLimitReached;
 
         var booking = Booking.Create(Id, bookedBy.Trim(), range, attendees);
         _bookings.Add(booking);

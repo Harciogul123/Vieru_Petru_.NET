@@ -4,4 +4,7 @@ namespace RoomHub.Api.Domain.Bookings;
 public interface IBookingRepository
 {
     Task<Booking?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
+
+    // R9: active bookings of one person whose startUtc falls on the given UTC day, in any room.
+    Task<int> CountActiveForPersonOnDayAsync(string bookedBy, DateTime dayUtc, CancellationToken cancellationToken);
 }

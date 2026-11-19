@@ -32,7 +32,7 @@ public sealed record DateRange
         StartUtc < other.EndUtc && other.StartUtc < EndUtc;
 
     // The contract says dates are UTC; a value without a Kind is treated as UTC, not as local time.
-    private static DateTime ToUtc(DateTime value) => value.Kind switch
+    public static DateTime ToUtc(DateTime value) => value.Kind switch
     {
         DateTimeKind.Utc => value,
         DateTimeKind.Local => value.ToUniversalTime(),

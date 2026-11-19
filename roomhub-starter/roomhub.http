@@ -125,3 +125,50 @@ POST {{baseUrl}}/api/rooms/{{roomId}}/bookings
 Content-Type: application/json
 
 { "bookedBy": "bogdan", "startUtc": "2030-01-10T11:00:00Z", "endUtc": "2030-01-10T13:00:00Z", "attendees": 4 }
+
+### R9: second room, to show the limit is across all rooms
+# @name createRoom2
+POST {{baseUrl}}/api/rooms
+Content-Type: application/json
+
+{ "name": "Study room 2", "capacity": 10 }
+
+###
+@roomId2 = {{createRoom2.response.body.$.id}}
+
+### R9: maria, 1st booking of the day, room 1 (expected: 201)
+# @name maria1
+POST {{baseUrl}}/api/rooms/{{roomId}}/bookings
+Content-Type: application/json
+
+{ "bookedBy": "maria", "startUtc": "2030-05-01T08:00:00Z", "endUtc": "2030-05-01T09:00:00Z", "attendees": 2 }
+
+###
+@maria1Id = {{maria1.response.body.$.id}}
+
+### R9: maria, 2nd booking of the day, room 2 (expected: 201)
+POST {{baseUrl}}/api/rooms/{{roomId2}}/bookings
+Content-Type: application/json
+
+{ "bookedBy": "maria", "startUtc": "2030-05-01T10:00:00Z", "endUtc": "2030-05-01T11:00:00Z", "attendees": 2 }
+
+### R9: maria, 3rd booking of the same day (expected: 409)
+POST {{baseUrl}}/api/rooms/{{roomId2}}/bookings
+Content-Type: application/json
+
+{ "bookedBy": "maria", "startUtc": "2030-05-01T15:00:00Z", "endUtc": "2030-05-01T16:00:00Z", "attendees": 2 }
+
+### R9: maria, booking on another day (expected: 201)
+POST {{baseUrl}}/api/rooms/{{roomId2}}/bookings
+Content-Type: application/json
+
+{ "bookedBy": "maria", "startUtc": "2030-05-02T15:00:00Z", "endUtc": "2030-05-02T16:00:00Z", "attendees": 2 }
+
+### R9: cancel maria's 1st booking (expected: 204)
+POST {{baseUrl}}/api/bookings/{{maria1Id}}/cancel
+
+### R9: the 3rd booking now passes, cancelled ones do not count (expected: 201)
+POST {{baseUrl}}/api/rooms/{{roomId2}}/bookings
+Content-Type: application/json
+
+{ "bookedBy": "maria", "startUtc": "2030-05-01T15:00:00Z", "endUtc": "2030-05-01T16:00:00Z", "attendees": 2 }
