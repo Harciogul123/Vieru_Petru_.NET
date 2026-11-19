@@ -1,8 +1,4 @@
-# AI-LOG
-
-Write down, in order, what you asked the AI. It is not a punishment: a missing or false log lowers the level D grade.
-
-| Time (approx.) | What you asked (briefly) | What you kept | What you changed or rejected |
-|---|---|---|---|
-| _(10m)_ | _(read all and do what is asking for)_ | _(all)_ | _(nothing)_ |
-|5 m|second |---|---|
+| 08:54 | Să analizeze cursurile 1–6 și proiectele CampusHub, ca să extragă structura (vertical slice, Result, handlers, EF Core + Repository/UoW) | Structura de foldere și regulile de stil propuse | — |
+| 09:06 | Să citească tot starter-ul RoomHub, să-mi spună dacă e ceva pus intenționat pentru AI și să facă transformarea | Cele 5 slice-uri din `Features/`, `Result<T>`/`Error`, domeniul bogat, handler-ele, EF Core + SQLite | I-am spus să NU completeze `DECISIONS.md`, `BUGS.md`, `AI-LOG.md` și să nu schimbe rutele |
+| 09:33 | Cerința nouă R9: ce fișiere modific și ce să scriu | Metoda `CountActiveForPersonOnDayAsync` în repository și verificarea în `Room.Book` | Am verificat că 404 pentru cameră rămâne înaintea oricărei validări |
+| 09:52 | Cerințele R10 (max 2h pentru săli cu capacitate > 10) și R11 (anulare doar cu cel puțin 60 min înainte) | `Room.Book` pentru R10, `Booking.Cancel(nowUtc)` pentru R11, ora din `TimeProvider` | Am verificat ordinea: deja anulată (R8) înaintea regulii de 60 de minute |
